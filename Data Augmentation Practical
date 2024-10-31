@@ -1,0 +1,203 @@
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import os
+import pylab as pl
+import matplotlib.pyplot as plt
+
+os.chdir("C:\\Users\\zohaib khan\\OneDrive\\Desktop\\USE ME\\dump\\zk")
+
+data = pd.read_csv("dryfruit.csv")
+
+data.head()
+
+pd.set_option('display.max_columns', None)
+
+data.head()
+
+#Check for missing values
+data.isnull().sum()
+
+#Check for duplicate values
+data[data.duplicated()]
+
+# To show Outliers in the data set run the code 
+
+num_vars = data.select_dtypes(include=['int','float']).columns.tolist()
+
+num_cols = len(num_vars)
+num_rows = (num_cols + 2 ) // 3
+fig, axs = plt.subplots(nrows=num_rows, ncols=3, figsize=(15, 5*num_rows))
+axs = axs.flatten()
+
+for i, var in enumerate (num_vars):
+    sns.boxplot(x=data[var],ax=axs[i])
+    axs[i].set_title(var)
+
+if num_cols < len(axs):
+  for i in range(num_cols , len(axs)):
+    fig.delaxes(axs[i])
+
+plt.tight_layout()
+plt.show()
+
+
+
+
+#To convert categorical into numerics run this code
+
+from sklearn import preprocessing
+for col in data.select_dtypes(include=['object']).columns:
+    label_encoder = preprocessing.LabelEncoder()
+    label_encoder.fit(data[col].unique())
+    data[col] = label_encoder.transform(data[col])
+    print(f'{col} : {data[col].unique()}')
+
+
+
+from autoviz.AutoViz_Class import AutoViz_Class 
+AV = AutoViz_Class()
+import matplotlib.pyplot as plt
+%matplotlib INLINE
+filename = 'dryfruit.csv'
+sep =","
+dft = AV.AutoViz(
+    filename  
+)
+
+
+#Segregrating dataset into X and y
+
+X = data.drop("Class", axis = 1)
+
+y = data["Class"]
+
+X.head()
+
+y.head()
+
+#Splitting the dataset into testing and training
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+
+#Scale the dataset
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
+from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis 
+
+
+
+models = {
+    'Decision Tree': DecisionTreeClassifier(),
+    'Random Forest': RandomForestClassifier(),
+    'K-Nearest Neighbors': KNeighborsClassifier(),
+    'Naive Bayes': GaussianNB(),
+    'Linear Discriminant Analysis': LinearDiscriminantAnalysis(),
+    'XGBoost': XGBClassifier(),
+    'CatBoost': CatBoostClassifier(),
+    'AdaBoost': AdaBoostClassifier(),
+    'Logistic Regression': LogisticRegression(),
+    'Extra Tree Classifier':ExtraTreesClassifier(),
+    'Gradient Boosting Classifier':GradientBoostingClassifier(),
+    'Quadratic Discrimination Classifier':QuadraticDiscriminantAnalysis()
+}
+
+
+import plotly.graph_objects as go
+from sklearn.metrics import accuracy_score
+
+model_scores = {}  
+
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    acc_score = accuracy_score(y_test, y_pred)
+    print(f'{name}:')
+    print(f'  Accuracy Score: {acc_score}\n')
+    model_scores[name] = acc_score  # Storing model name and accuracy score
+
+# Plotting bar chart using Plotly
+fig = go.Figure([go.Bar(x=list(model_scores.keys()), y=list(model_scores.values()))])
+fig.update_layout(title='Accuracy Scores of Models',
+                  xaxis_title='Model Name',
+                  yaxis_title='Accuracy Score')
+fig.show()
+
+
+
+
+# Import required libraries
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from xgboost import XGBClassifier
+
+
+# Initialize classifiers
+log_model = LogisticRegression()
+rf_model = RandomForestClassifier()
+knn_model = KNeighborsClassifier()
+gnb_model = GaussianNB()
+gbc_model = GradientBoostingClassifier()
+ada_model = AdaBoostClassifier()
+xgb_model = XGBClassifier()
+mlp_model = MLPClassifier()
+
+# Fitting models
+log_model.fit(X_train, y_train)
+rf_model.fit(X_train, y_train)
+knn_model.fit(X_train, y_train)
+gnb_model.fit(X_train, y_train)
+gbc_model.fit(X_train, y_train)
+ada_model.fit(X_train, y_train)
+xgb_model.fit(X_train, y_train)
+mlp_model.fit(X_train, y_train)
+
+# Importing model testing libraries
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# Define a function to evaluate models
+def evaluate_model(model, model_name):
+    y_pred = model.predict(X_test)
+    print(model_name)
+    print(f"Training data accuracy: {model.score(X_train, y_train)}")
+    print(f"Testing data accuracy: {model.score(X_test, y_test)}")
+    print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
+    print(f"Precision: {precision_score(y_test, y_pred, average='weighted')}")
+    print(f"Recall: {recall_score(y_test, y_pred, average='weighted')}")
+    print(f"F1 score: {f1_score(y_test, y_pred, average='weighted')}\n")
+
+# Evaluate each model
+evaluate_model(log_model, "Logistic Regression")
+evaluate_model(rf_model, "Random Forest")
+evaluate_model(knn_model, "K Nearest Neighbors")
+evaluate_model(gnb_model, "Gaussian Naive Bayes")
+evaluate_model(gbc_model, "Gradient Boosting")
+evaluate_model(ada_model, "AdaBoost")
+evaluate_model(xgb_model, "XGBoost")
+evaluate_model(mlp_model, "Neural Network (MLP)")
